@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Weather Prediction: Bongabon, Palayan & Cabanatuan</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="Realtime spatio-temporal weather prediction and GIS mapping for Bongabon, Palayan, and Cabanatuan" name="keywords" />
+    <meta content="Interactive GIS map showing weather predictions for Bongabon, Palayan, and Cabanatuan using machine learning." name="description" />
+
+    <!-- Favicons -->
+    <link
+      href="{{ url_for('static', filename='img/favicon-2.png') }}"
+      rel="icon"
+    />
+    <link href="img/apple-touch-icon.png" rel="apple-touch-icon" />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,500,600,700,700i|Montserrat:300,400,500,600,700"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap CSS File -->
+    <link
+      href="{{ url_for('static', filename='lib/bootstrap/css/bootstrap.min.css') }}"
+      rel="stylesheet"
+    />
+
+    <!-- Libraries CSS Files -->
+    <link
+      href="{{ url_for('static', filename='lib/font-awesome/css/font-awesome.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='lib/animate/animate.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='lib/ionicons/css/ionicons.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='lib/lightbox/css/lightbox.min.css') }}"
+      rel="stylesheet"
+    />
+    <!-- Main Stylesheet File -->
+    <link
+      href="{{ url_for('static', filename='css/style.css') }}"
+      rel="stylesheet"
+    />
+    <style>
+      .map-placeholder {
+        background: #e9f5ff;
+        border: 2px dashed #007bff;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #007bff;
+        font-weight: 500;
+        text-align: center;
+        padding: 20px;
+        height: 100%;
+        min-height: 400px;
+      }
+      .highlight {
+        color: #007bff;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!--==========================
+  Header
+  ============================-->
+    <header id="header">
+      <div id="topbar">
+        <div class="container">
+          <div class="social-links">
+            <!-- Social links can be added later -->
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="logo float-left">
+          <a href="#header" class="scrollto">
+            <img
+              style="margin-top: -5px; min-height: 50px;"
+              src="{{ url_for('static', filename='img/logo.png') }}"
+              alt="Weather Prediction: Bongabon, Palayan, Cabanatuan"
+              class="img-fluid"
+            />
+          </a>
+        </div>
+
+        <nav class="main-nav float-right d-none d-lg-block">
+          <ul>
+            <li class="active"><a href="index.html">Home</a></li>
+            <li><a href="map.html">Live Map</a></li>
+            <li><a href="predicts.html">City Forecast</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!--==========================
+    Intro Section
+  ============================-->
+    <section id="intro" class="clearfix">
+      <div class="container d-flex h-100">
+        <div class="row justify-content-center align-self-center">
+          <div class="col-md-5 intro-info order-md-first order-last" style="background-color: transparent;padding-right:50px;">
+            <a href="#header" class="scrollto">
+              <img
+                style="margin-top: 0px; max-height: 150px;"
+                src="{{ url_for('static', filename='img/logo.png') }}"
+                alt="Logo"
+                class="img-fluid"
+              />
+            </a>
+            <h3 style="padding-top:30px;padding-left:10px;line-height: 40px;">
+              Realtime Weather Prediction for Bongabon, Palayan & Cabanatuan
+            </h3>
+            <br />
+            <div style="padding-left:10px;">
+              <a href="map.html" class="btn-get-started scrollto">View Live Map</a>
+            </div>
+          </div>
+
+          <div class="col-md-7 intro-img order-md-last order-first" style="background-color: transparent;">
+            <div class="map-placeholder">
+              <div>
+                <h4>Live Weather Prediction Map</h4>
+                <p>Interactive GIS map showing predicted weather conditions for Bongabon, Palayan, and Cabanatuan.</p>
+                <p class="mt-3"><a href="map.html" class="btn btn-primary">Open Full Map</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main id="main">
+      <!--==========================
+      About Us Section
+    ============================-->
+      <section id="about">
+        <div class="container">
+          <div class="row">
+            
+            <div class="col-lg-5 col-md-6">
+              <div class="about-img">
+                <img
+                  src="{{ url_for('static', filename='img/nueva_ecija.png') }}"
+                  alt="Map of Nueva Ecija with focus on Bongabon, Palayan, Cabanatuan"
+                  style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"
+                />
+              </div>
+            </div>
+          
+
+            <div class="col-lg-7 col-md-6">
+              <div class="about-content">
+                <h2>About This System</h2>
+                <h3>
+                  A localized GIS-based platform to predict and visualize weather conditions in Bongabon, Palayan, and Cabanatuan.
+                </h3>
+                <p>
+                  Located in Nueva Ecija — a province prone to heavy monsoon rains and seasonal flooding — these three municipalities face significant weather-related risks that impact agriculture, transport, and daily life.
+                </p>
+                <p>
+                  This system leverages <span class="highlight">machine learning</span> and <span class="highlight">spatio-temporal GIS mapping</span> to provide hyperlocal, real-time weather predictions — helping residents, local governments, and emergency responders prepare effectively.
+                </p>
+                <p>
+                  Predictions are generated using local weather data and displayed on an interactive map, with color-coded markers indicating “Good” or “Adverse” weather conditions for each of the three towns.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!--==========================
+      Services Section
+    ============================-->
+      <section id="services" class="section-bg">
+        <div class="container">
+          <header class="section-header">
+            <h3>Features</h3>
+            <p>
+              Explore our tools designed to keep you informed and prepared for weather in Bongabon, Palayan, and Cabanatuan.
+            </p>
+          </header>
+
+          <div class="row">
+            <div class="col-md-6 col-lg-4 wow bounceInUp" data-wow-duration="1.4s">
+              <div class="box" style="height: 320px;">
+                <div class="icon" style="background: #eafde7;">
+                  <i class="ion-ios-globe-outline" style="color: #41cf2e;"></i>
+                </div>
+                <h4 class="title"><a href="map.html">Live GIS Map</a></h4>
+                <p class="description">
+                  View an interactive map focused on Bongabon, Palayan, and Cabanatuan with real-time weather predictions. Toggle between markers and heatmaps.
+                </p>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 wow bounceInUp" data-wow-duration="1.4s">
+              <div class="box" style="height: 320px;">
+                <div class="icon" style="background: #fceef3;">
+                  <i class="ion-ios-location-outline" style="color: #ff689b;"></i>
+                </div>
+                <h4 class="title"><a href="predicts.html">City Forecast</a></h4>
+                <p class="description">
+                  Get detailed weather predictions for Bongabon, Palayan, and Cabanatuan — including temperature, wind, precipitation, and cloud cover.
+                </p>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 wow bounceInUp" data-wow-delay="0.1s" data-wow-duration="1.4s">
+              <div class="box" style="height: 320px;">
+                <div class="icon" style="background: #fff0da;">
+                  <i class="ion-ios-analytics-outline" style="color: #e98e06;"></i>
+                </div>
+                <h4 class="title">Spatio-Temporal Analysis</h4>
+                <p class="description">
+                  Our model analyzes spatial patterns and temporal trends specific to these three towns — delivering accurate, localized forecasts ideal for planning and emergency response.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!--==========================
+      Why Us Section
+    ============================-->
+      <section id="why-us" class="wow fadeIn">
+        <div class="container">
+          <div class="row counters">
+            <div class="col-lg-3 col-6 text-center">
+              <span data-toggle="counter-up">3</span>
+              <p>Focus municipalities in Nueva Ecija</p>
+            </div>
+
+            <div class="col-lg-3 col-6 text-center">
+              <span data-toggle="counter-up">3</span>
+              <p>Cities covered in our prediction model</p>
+            </div>
+
+            <div class="col-lg-3 col-6 text-center">
+              <span data-toggle="counter-up">95</span>
+              <p>% Model accuracy on historical data</p>
+            </div>
+
+            <div class="col-lg-3 col-6 text-center">
+              <span data-toggle="counter-up">1</span>
+              <p>Localized GIS dashboard for Bongabon, Palayan & Cabanatuan</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!--==========================
+      Frequently Asked Questions Section
+    ============================-->
+      <section id="faq">
+        <div class="container">
+          <header class="section-header">
+            <h3>Frequently Asked Questions</h3>
+          </header>
+
+          <ul id="faq-list" class="wow fadeInUp">
+            <li>
+              <a data-toggle="collapse" class="collapsed" href="#faq1">
+                What problem does this solve? <i class="ion-android-remove"></i>
+              </a>
+              <div id="faq1" class="collapse" data-parent="#faq-list">
+                <p>
+                  Bongabon, Palayan, and Cabanatuan face frequent weather disruptions — from heavy rains to seasonal flooding — that impact agriculture, transport, and safety. This system provides localized, real-time weather predictions to help residents and local government units make informed decisions — from daily planning to disaster preparedness.
+                </p>
+              </div>
+            </li>
+
+            <li>
+              <a data-toggle="collapse" href="#faq2" class="collapsed">
+                How was this built? <i class="ion-android-remove"></i>
+              </a>
+              <div id="faq2" class="collapse" data-parent="#faq-list">
+                <p>
+                  <b>DATA</b><br>
+                  We trained our model using historical and real-time weather data (temperature, wind, precipitation, humidity, cloud cover) specifically for Bongabon, Palayan, and Cabanatuan.<br><br>
+                  <b>MODEL</b><br>
+                  A Decision Tree Classifier (via scikit-learn) predicts “Good” or “Adverse” weather. The model is serialized via pickle and loaded in Flask.<br><br>
+                  <b>GIS MAPPING</b><br>
+                  Using Folium, we plot predictions on an interactive map focused on these three towns. Each location is marked with color-coded pins (green = good, red = adverse) and includes a temperature heatmap layer.<br><br>
+                  <b>FRONTEND</b><br>
+                  Built with Flask, Bootstrap, and vanilla JavaScript. Hosted for public access.
+                </p>
+              </div>
+            </li>
+
+            <li>
+              <a data-toggle="collapse" href="#faq3" class="collapsed">
+                What are you proud of? <i class="ion-android-remove"></i>
+              </a>
+              <div id="faq3" class="collapse" data-parent="#faq-list">
+                <p>
+                - First hyperlocal spatio-temporal weather prediction map focused on Bongabon, Palayan, and Cabanatuan.<br>
+                - High-accuracy model tailored to Nueva Ecija’s tropical climate (with precipitation multiplier).<br>
+                - Clean, responsive UI that works on mobile and desktop.<br>
+                - Fully integrated system: from API data fetching → ML prediction → GIS visualization — all for three key towns.
+                </p>
+              </div>
+            </li>
+
+            <li>
+              <a data-toggle="collapse" href="#faq4" class="collapsed">
+                What’s next? <i class="ion-android-remove"></i>
+              </a>
+              <div id="faq4" class="collapse" data-parent="#faq-list">
+                <p>
+                - Add time-slider for 3-day forecast animations specific to these towns.<br>
+                - Integrate localized damage/risk estimation based on population density and infrastructure in each town.<br>
+                - Add radar/satellite overlay for real-time storm tracking over Nueva Ecija.<br>
+                - Mobile app version for on-the-go alerts for residents of Bongabon, Palayan, and Cabanatuan.
+                </p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <!--==========================
+    Footer
+  ============================-->
+    <footer id="footer" class="section-bg" style="background-color: #f5f8fd;">
+      <div class="footer-top">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-4"></div>
+            <div class="col-lg-4">
+              <div class="row">
+                <div class="col-sm-11">
+                  <div class="footer-info">
+                    <a href="index.html" class="scrollto">
+                      <img
+                        style="margin-top: 0px; max-height: 100px;"
+                        src="{{ url_for('static', filename='img/logo.png') }}"
+                        alt="Logo"
+                        class="img-fluid"
+                      />
+                    </a>
+                    <p style="padding-top:20px;">
+                      Realtime spatio-temporal weather prediction and GIS mapping for Bongabon, Palayan, and Cabanatuan — helping local communities prepare, one forecast at a time.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4"></div>
+<!--
+            <div class="col-lg-6">
+              <div class="form">
+                <h4>Feedback or Suggestions?</h4>
+                <form action="" method="post" role="form" class="contactForm">
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      name="name"
+                      class="form-control"
+                      id="name"
+                      placeholder="Your Name"
+                      data-rule="minlen:4"
+                      data-msg="Please enter at least 4 chars"
+                    />
+                    <div class="validation"></div>
+                  </div>
+                  <div class="form-group">
+                    <input
+                      type="email"
+                      class="form-control"
+                      name="email"
+                      id="email"
+                      placeholder="Your Email"
+                      data-rule="email"
+                      data-msg="Please enter a valid email"
+                    />
+                    <div class="validation"></div>
+                  </div>
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="subject"
+                      id="subject"
+                      placeholder="Subject"
+                      data-rule="minlen:4"
+                      data-msg="Please enter at least 8 chars of subject"
+                    />
+                    <div class="validation"></div>
+                  </div>
+                  <div class="text-center">
+                    <button type="submit" title="Send Message">
+                      Send Message
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          -->
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="{{ url_for('static', filename='lib/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/jquery/jquery-migrate.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/mobile-nav/mobile-nav.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/wow/wow.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/counterup/counterup.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/isotope/isotope.pkgd.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/lightbox/js/lightbox.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='contactform/contactform.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  </body>
+</html>

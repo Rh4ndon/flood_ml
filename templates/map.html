@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Flood Risk Prediction Map: Bongabon, Palayan & Cabanatuan</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="Interactive spatio-temporal flood risk prediction map for Bongabon, Palayan, and Cabanatuan" name="keywords" />
+    <meta content="View real-time flood risk predictions for Bongabon, Palayan, and Cabanatuan on an interactive GIS map. Stay safe and prepared." name="description" />
+
+    <!-- Favicons -->
+    <link
+      href="{{ url_for('static', filename='img/favicon-2.png') }}"
+      rel="icon"
+    />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,500,600,700,700i|Montserrat:300,400,500,600,700"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="{{ url_for('static', filename='lib/bootstrap/css/bootstrap.min.css') }}"
+      rel="stylesheet"
+    />
+
+    <!-- Libraries CSS -->
+    <link
+      href="{{ url_for('static', filename='lib/font-awesome/css/font-awesome.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='lib/animate/animate.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='lib/ionicons/css/ionicons.min.css') }}"
+      rel="stylesheet"
+    />
+
+    <!-- Main Stylesheet -->
+    <link
+      href="{{ url_for('static', filename='css/style.css') }}"
+      rel="stylesheet"
+    />
+
+    <style>
+      #map-container {
+        width: 100%;
+        height: 85vh;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+        position: relative;
+      }
+      .section-map {
+        padding: 60px 0;
+        background: #f8f9fa;
+      }
+      .map-header {
+        margin-bottom: 30px;
+        text-align: center;
+      }
+      .map-header h2 {
+        font-weight: 700;
+        color: #007bff;
+      }
+      .map-header p {
+        color: #6c757d;
+        font-size: 1.1rem;
+      }
+      .legend {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+        font-size: 0.9rem;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+      .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+      .low-risk {
+        background-color: #28a745;
+      }
+      .high-risk {
+        background-color: #dc3545;
+      }
+      .alert-box {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+        font-size: 0.95rem;
+      }
+      
+      /* Loading Animation Styles */
+      #loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+      }
+      .spinner {
+        width: 70px;
+        height: 70px;
+        position: relative;
+        margin-bottom: 20px;
+      }
+      .spinner:before, .spinner:after {
+        content: '';
+        border-radius: 50%;
+        position: absolute;
+        inset: 0;
+        box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3) inset;
+      }
+      .spinner:after {
+        box-shadow: 0 2px 0 #007bff inset;
+        animation: rotate 2s linear infinite;
+      }
+      @keyframes rotate {
+        0% { transform: rotate(0); }
+        100% { transform: rotate(360deg); }
+      }
+      .loading-text {
+        font-size: 1.2rem;
+        color: #007bff;
+        font-weight: 500;
+        margin-bottom: 10px;
+      }
+      .loading-subtext {
+        color: #6c757d;
+        text-align: center;
+        max-width: 80%;
+        margin: 0 auto;
+      }
+      .progress-container {
+        width: 80%;
+        max-width: 400px;
+        background: #e9ecef;
+        height: 8px;
+        border-radius: 4px;
+        margin-top: 15px;
+        overflow: hidden;
+      }
+      .progress-bar {
+        height: 100%;
+        width: 0%;
+        background: #007bff;
+        border-radius: 4px;
+        transition: width 0.5s ease;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!--==========================
+    Header
+    ============================-->
+    <header id="header">
+      <div id="topbar">
+        <div class="container">
+          <div class="social-links">
+            <!-- Social links can be added later -->
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="logo float-left">
+          <a href="index.html" class="scrollto">
+            <img
+              style="margin-top: -5px; min-height: 50px;"
+              src="{{ url_for('static', filename='img/logo.png') }}"
+              alt="Flood Prediction: Bongabon, Palayan, Cabanatuan"
+              class="img-fluid"
+            />
+          </a>
+        </div>
+
+        <nav class="main-nav float-right d-none d-lg-block">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="predicts.html">City Flood Risk</a></li>
+            <li class="active"><a href="map.html">Live Flood Risk Map</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="section-map">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-12">
+              <div class="map-header">
+                <h2>Flood Risk Map: Bongabon, Palayan & Cabanatuan</h2>
+                <p>Interactive GIS map showing real-time flood risk predictions for Bongabon, Palayan, and Cabanatuan. Zoom, pan, and click markers for local details.</p>
+                <div class="alert-box">
+                  <strong>⚠️ Important:</strong> This system predicts <strong>flood risk</strong> based on current weather conditions in Bongabon, Palayan, and Cabanatuan. "High Risk" areas may experience flooding in the next 24-48 hours. Please take precautions.
+                </div>
+              </div>
+              <div id="map-container">
+                <!-- Loading overlay that will be hidden when map is ready -->
+                <div id="loading-overlay">
+                  <div class="spinner"></div>
+                  <div class="loading-text">Generating Flood Risk Map</div>
+                  <div class="loading-subtext">
+                    This may take a few moments as we're gathering real-time weather data for Bongabon, Palayan, and Cabanatuan...
+                  </div>
+                  <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                  </div>
+                </div>
+                
+                <!-- Map will be inserted here -->
+                {{ map_html|safe }}
+              </div>
+              <div class="legend">
+                <h5><strong>Legend</strong></h5>
+                <div class="legend-item">
+                  <div class="legend-color low-risk"></div>
+                  <span>Low Flood Risk</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color high-risk"></div>
+                  <span>High Flood Risk</span>
+                </div>
+                <div class="legend-item mt-2">
+                  <i class="ion-ios-rainy" style="color: #2282ff; margin-right: 5px;"></i>
+                  <span>Heatmap = Precipitation Intensity (mm)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!--==========================
+    Footer
+    ============================-->
+    <footer id="footer" class="section-bg" style="background-color: #f5f8fd;">
+      <div class="footer-top">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-4"></div>
+            <div class="col-lg-4">
+              <div class="row">
+                <div class="col-sm-11">
+                  <div class="footer-info">
+                    <a href="index.html" class="scrollto">
+                      <img
+                        style="margin-top: 0px; max-height: 100px;"
+                        src="{{ url_for('static', filename='img/logo.png') }}"
+                        alt="Logo"
+                        class="img-fluid"
+                      />
+                    </a>
+                    <p style="padding-top: 20px;">
+                      Realtime flood risk prediction and GIS mapping for Bongabon, Palayan, and Cabanatuan — helping local communities prepare and stay safe during heavy rains and typhoon season.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4"></div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="{{ url_for('static', filename='lib/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/jquery/jquery-migrate.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/mobile-nav/mobile-nav.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/wow/wow.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <script>
+      // Function to hide loading overlay when map is ready
+      function hideLoadingOverlay() {
+        document.getElementById('loading-overlay').style.display = 'none';
+      }
+      
+      // Function to simulate progress (since we can't track actual map generation progress)
+      function simulateProgress() {
+        const progressBar = document.getElementById('progress-bar');
+        let width = 0;
+        
+        const interval = setInterval(() => {
+          if (width >= 90) { // Stop at 90% until map is fully loaded
+            clearInterval(interval);
+          } else {
+            width += Math.random() * 10;
+            progressBar.style.width = Math.min(width, 90) + '%';
+          }
+        }, 500);
+      }
+      
+      // Start the progress simulation when page loads
+      document.addEventListener('DOMContentLoaded', function() {
+        simulateProgress();
+        
+        // Check if map is loaded every second
+        const checkMapLoaded = setInterval(function() {
+          const mapElement = document.querySelector('.folium-map');
+          if (mapElement && mapElement.offsetHeight > 0) {
+            // Complete the progress bar and hide loading overlay
+            document.getElementById('progress-bar').style.width = '100%';
+            setTimeout(hideLoadingOverlay, 500);
+            clearInterval(checkMapLoaded);
+          }
+        }, 1000);
+        
+        // Fallback - hide loading after 30 seconds max
+        setTimeout(function() {
+          hideLoadingOverlay();
+          clearInterval(checkMapLoaded);
+        }, 30000);
+      });
+    </script>
+  </body>
+</html>

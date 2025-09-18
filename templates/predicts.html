@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Flood Risk Prediction: Bongabon, Palayan & Cabanatuan</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="Realtime flood risk prediction for Bongabon, Palayan, and Cabanatuan using machine learning and GIS" name="keywords" />
+    <meta content="Get localized flood risk forecasts and critical weather conditions for Bongabon, Palayan, Cabanatuan — or any Philippine city." name="description" />
+
+    <!-- Favicons -->
+    <link
+      href="{{ url_for('static', filename='img/favicon-2.png') }}"
+      rel="icon"
+    />
+    <link href="img/apple-touch-icon.png" rel="apple-touch-icon" />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,500,600,700,700i|Montserrat:300,400,500,600,700"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap CSS File -->
+    <link
+      href="{{ url_for('static', filename='lib/bootstrap/css/bootstrap.min.css') }}"
+      rel="stylesheet"
+    />
+
+    <!-- Libraries CSS Files -->
+    <link
+      href="{{ url_for('static', filename='lib/font-awesome/css/font-awesome.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='lib/animate/animate.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='lib/ionicons/css/ionicons.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='lib/lightbox/css/lightbox.min.css') }}"
+      rel="stylesheet"
+    />
+    <!-- Main Stylesheet File -->
+    <link
+      href="{{ url_for('static', filename='css/style.css') }}"
+      rel="stylesheet"
+    />
+
+    <style>
+      .flood-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+      }
+      .flood-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      }
+      .low-risk {
+        color: #28a745 !important;
+        border-left: 4px solid #28a745;
+      }
+      .high-risk {
+        color: #dc3545 !important;
+        border-left: 4px solid #dc3545;
+      }
+      .metric-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+      .metric-label {
+        font-size: 1rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .city-form {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      }
+      .alert-box {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+        font-size: 0.95rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!--==========================
+  Header
+  ============================-->
+    <header id="header">
+      <div id="topbar">
+        <div class="container">
+          <div class="social-links">
+            <!-- Social links can be added later -->
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="logo float-left">
+          <a href="index.html" class="scrollto">
+            <img
+              style="margin-top: -5px; min-height: 50px;"
+              src="{{ url_for('static', filename='img/logo.png') }}"
+              alt="Flood Prediction: Bongabon, Palayan, Cabanatuan"
+              class="img-fluid"
+            />
+          </a>
+        </div>
+
+        <nav class="main-nav float-right d-none d-lg-block">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="map.html">Live Flood Map</a></li>
+            <li class="active"><a href="predicts.html">City Flood Risk</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="section-bg" style="padding: 80px 0;">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-8">
+              <div class="city-form text-center">
+                <h2>Check Flood Risk for Bongabon, Palayan or Cabanatuan</h2>
+                <p class="mb-4">You may also check any other Philippine city — but our model is optimized for these three Nueva Ecija towns.</p>
+                <form method="POST" action="predicts.html">
+                  <div class="input-group mb-3">
+                    <input 
+                      type="text" 
+                      name="city" 
+                      class="form-control form-control-lg"
+                      placeholder="e.g., Bongabon, Palayan City, Cabanatuan"
+                      required
+                    >
+                    <button 
+                      type="submit" 
+                      class="btn btn-danger btn-lg"
+                      style="background-color: #dc3545; border: none;"
+                    >
+                      Check Flood Risk
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {% if pred %}
+      <section class="section-bg" style="padding: 60px 0;">
+        <div class="container">
+          <div class="row justify-content-center mb-5">
+            <div class="col-lg-10 text-center">
+              <h1>{{ cityname }}</h1>
+              <p class="lead">Realtime Flood Risk Assessment</p>
+              <div class="alert-box">
+                <strong>⚠️ Important:</strong> This system predicts <strong>flood risk</strong> based on current weather data in <strong>Bongabon, Palayan, or Cabanatuan</strong>. "High Risk" areas may experience flooding in the next 24-48 hours. Please take precautions.
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- Flood Risk Prediction Card -->
+            <div class="col-lg-12 mb-4">
+              <div class="box flood-card p-4 {{ 'low-risk' if pred == 'Good Weather' else 'high-risk' }}">
+                <div class="d-flex align-items-center">
+                  <div class="icon me-4" style="font-size: 2.5rem;">
+                    <i class="ion-ios-warning" style="color: inherit;"></i>
+                  </div>
+                  <div>
+                    <h3 class="mb-1">Flood Risk Prediction</h3>
+                    <h1 class="metric-value mb-2">
+                      {% if pred == 'Good Weather' %}Low Risk{% else %}High Risk{% endif %}
+                    </h1>
+                    <h5 class="mb-0" style="font-weight: 500;">
+                      {% if pred_fil == 'Maganda ang panahon' %}Mababang Panganib ng Baha{% else %}Mataas na Panganib ng Baha{% endif %}
+                    </h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Critical Weather Metrics (Flood Drivers) -->
+            <div class="col-md-6 col-lg-4 mb-4">
+              <div class="box flood-card p-4">
+                <div class="icon mb-3" style="background: #e1eeff; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                  <i class="ion-ios-rainy" style="color: #2282ff; font-size: 1.8rem;"></i>
+                </div>
+                <h4 class="metric-label">Precipitation</h4>
+                <h2 class="metric-value">{{ percip }} mm</h2>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 mb-4">
+              <div class="box flood-card p-4">
+                <div class="icon mb-3" style="background: #fceef3; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                  <i class="ion-ios-thermometer" style="color: #ff689b; font-size: 1.8rem;"></i>
+                </div>
+                <h4 class="metric-label">Temperature</h4>
+                <h2 class="metric-value">{{ temp }}°C</h2>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 mb-4">
+              <div class="box flood-card p-4">
+                <div class="icon mb-3" style="background: #e6fdfc; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                  <i class="ion-ios-speedometer" style="color: #3fcdc7; font-size: 1.8rem;"></i>
+                </div>
+                <h4 class="metric-label">Wind Speed</h4>
+                <h2 class="metric-value">{{ wspd }} km/h</h2>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 mb-4">
+              <div class="box flood-card p-4">
+                <div class="icon mb-3" style="background: #eafde7; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                  <i class="ion-ios-cloud" style="color: #41cf2e; font-size: 1.8rem;"></i>
+                </div>
+                <h4 class="metric-label">Cloud Cover</h4>
+                <h2 class="metric-value">{{ cloudcover }}%</h2>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 mb-4">
+              <div class="box flood-card p-4">
+                <div class="icon mb-3" style="background: #fff0da; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                  <i class="ion-ios-sunny" style="color: #e98e06; font-size: 1.8rem;"></i>
+                </div>
+                <h4 class="metric-label">Max Temperature</h4>
+                <h2 class="metric-value">{{ maxt }}°C</h2>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 mb-4">
+              <div class="box flood-card p-4">
+                <div class="icon mb-3" style="background: #ecebff; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                  <i class="ion-ios-water" style="color: #8660fe; font-size: 1.8rem;"></i>
+                </div>
+                <h4 class="metric-label">Humidity</h4>
+                <h2 class="metric-value">{{ humidity }}%</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      {% endif %}
+    </main>
+
+    <!--==========================
+    Footer
+  ============================-->
+    <footer id="footer" class="section-bg" style="background-color: #f5f8fd;">
+      <div class="footer-top">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-4"></div>
+            <div class="col-lg-4">
+              <div class="row">
+                <div class="col-sm-11">
+                  <div class="footer-info">
+                    <a href="index.html" class="scrollto">
+                      <img
+                        style="margin-top: 0px; max-height: 100px;"
+                        src="{{ url_for('static', filename='img/logo.png') }}"
+                        alt="Logo"
+                        class="img-fluid"
+                      />
+                    </a>
+                    <p style="padding-top: 20px;">
+                      Realtime flood risk prediction and GIS mapping focused on Bongabon, Palayan, and Cabanatuan — helping local communities prepare and stay safe during heavy rains and typhoon season.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4"></div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="{{ url_for('static', filename='lib/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/jquery/jquery-migrate.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/mobile-nav/mobile-nav.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/wow/wow.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/counterup/counterup.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/isotope/isotope.pkgd.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/lightbox/js/lightbox.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='contactform/contactform.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  </body>
+</html>
