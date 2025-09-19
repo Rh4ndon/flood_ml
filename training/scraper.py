@@ -25,7 +25,7 @@ def get_data(date, month, year, days, location):
             f"aggregateHours={24 * days}&"
             f"startDateTime={b}T00:00:00&"
             f"endDateTime={a}T00:00:00&"
-            f"unitGroup=uk&contentType=json&"
+            f"unitGroup=metric&contentType=json&"
             f"dayStartTime=0:0:00&dayEndTime=0:0:00&"
             f"location={location}&"
             f"key={API_KEY}"

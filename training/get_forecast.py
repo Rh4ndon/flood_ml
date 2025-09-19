@@ -6,7 +6,7 @@ import requests
 def get_data(lat, lon):
     
     
-    k = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/weatherdata/forecast?locations=" + str(lat) + "%2C%20" + str(lon) + "&aggregateHours=24&unitGroup=us&shortColumnNames=false&contentType=json&key=Q6JH8Y4DVMP94X2D8LK7YX4HY"
+    k = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/weatherdata/forecast?locations=" + str(lat) + "%2C%20" + str(lon) + "&aggregateHours=24&unitGroup=metric&shortColumnNames=false&contentType=json&key=Q6JH8Y4DVMP94X2D8LK7YX4HY"
     x = requests.get(k).json()['locations']
     for i in x:
         y = x[i]['values']
